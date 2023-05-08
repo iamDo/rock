@@ -1,11 +1,11 @@
 #+title: Rock logging
 
-* Requirements
-** Single file for logging
+** Requirements
+*** Single file for logging
 Configurable in config file, defaults to ~~/.local/share/rock/time.sheet~
-** Config file
+*** Config file
 Located in ~~/.config/rock/rock.conf~
-** Rounding of timestamps
-** Calculation of duration for each entry
-** End of Day summary
-** Commandline interface
+*** Rounding of timestamps
+*** Calculation of duration for each entry
+*** End of Day summary
+*** Commandline interface

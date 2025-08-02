@@ -16,21 +16,35 @@ func Stop(ticket string, comment string, logFile string) error {
 	return writeLog(logEntry, logFile)
 }
 
-func GetClockedState(ticket string, logFile string) (string, error) {
+func getLogEntries(logFile string) ([]LogEntry, error) {
 	dat, err := os.ReadFile(logFile)
 	if err != nil {
-		return "", fmt.Errorf("failed to open log file: %w", err)
+		return nil, fmt.Errorf("failed to open log file: %w", err)
 	}
 
-	logData := strings.Split(string(dat[:]), "\n")
+	logData := strings.SplitSeq(string(dat[:]), "\n")
 	var logEntries []LogEntry
-	for _, log := range logData {
+	for log := range logData {
 		l, err := ParseLogEntry(log)
-		if err == nil && l.Ticket == ticket {
+		if err == nil {
 			logEntries = append(logEntries, l)
 		}
 	}
-	lastEntry := logEntries[len(logEntries) - 1]
+	return logEntries, nil
+}
+
+func GetClockedState(ticket string, logFile string) (string, error) {
+	logEntries, err := getLogEntries(logFile)
+	if err != nil {
+		return "", err
+	}
+	var matchingEntries []LogEntry
+	for _, log := range logEntries {
+		if log.Ticket == ticket {
+			matchingEntries = append(matchingEntries, log)
+		}
+	}
+	lastEntry := matchingEntries[len(matchingEntries) - 1]
 
 	return lastEntry.Action, nil
 }

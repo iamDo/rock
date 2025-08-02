@@ -5,6 +5,7 @@ import (
 	"rock/tracker"
 	"github.com/spf13/cobra"
 	"os"
+	"github.com/spf13/viper"
 )
 
 var startCmd = &cobra.Command{
@@ -15,6 +16,7 @@ var startCmd = &cobra.Command{
 }
 
 func startRun(cmd *cobra.Command, args []string) {
+	logFile := viper.GetString("logfile")
 	comment, err := cmd.Flags().GetString("comment")
 	ticket := args[0]
 	if err != nil {
@@ -22,7 +24,7 @@ func startRun(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	tracker.Start(ticket, comment, "rock.log")
+	tracker.Start(ticket, comment, logFile)
 }
 
 func init() {

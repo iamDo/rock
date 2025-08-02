@@ -55,8 +55,9 @@ func ParseLogEntry(l string) (LogEntry, error) {
 }
 
 func NewLogEntryNow(action string, ticket string, comment string) LogEntry {
+	now := time.Now()
 	return LogEntry{
-		Timestamp: time.Now(),
+		Timestamp: time.Date(0, 1, 1, now.Hour(), now.Minute(), 0, 0, time.UTC),
 		Action: action,
 		Ticket: ticket,
 		Comment: comment,

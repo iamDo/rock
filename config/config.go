@@ -1,11 +1,27 @@
 package config
 
 import (
+	"fmt"
 	"os"
-	"github.com/spf13/viper"
 	"path/filepath"
+	"strings"
+
+	"github.com/spf13/viper"
 )
 
+
+func LogFilePath() string {
+	logFilePath := viper.GetString("logfile")
+	if logFilePath[0] == '~' {
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			fmt.Println(err.Error())
+			os.Exit(1)
+		}
+		logFilePath = strings.Replace(logFilePath, "~", homeDir, 1)
+	}
+	return logFilePath
+}
 
 func Init() {
 	homeDir, err := os.UserHomeDir()

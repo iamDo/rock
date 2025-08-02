@@ -45,6 +45,11 @@ func lastLogEntry(logFile string) (LogEntry, error) {
 	if err != nil {
 		return LogEntry{}, err
 	}
+
+	if logEntries == nil {
+		return LogEntry{}, nil
+	}
+
 	return logEntries[len(logEntries) - 1], nil
 }
 

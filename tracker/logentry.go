@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 	"time"
+	"unicode"
 )
 
 const logEntryFormat = "%s:%s:%s: "
@@ -37,7 +38,7 @@ func ParseLogEntry(l string) (LogEntry, error) {
 
 	comment := ""
 	if (len(splitLine) > 4) {
-		comment = splitLine[4]
+		comment = strings.TrimLeftFunc(splitLine[4], unicode.IsSpace)
 	}
 
 	timeStamp, err := time.Parse("15:04", splitLine[0] + ":" + splitLine[1])

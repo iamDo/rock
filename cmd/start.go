@@ -2,8 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"strings"
-
+	"rock/tracker"
 	"github.com/spf13/cobra"
 	"os"
 )
@@ -18,20 +17,12 @@ var startCmd = &cobra.Command{
 func startRun(cmd *cobra.Command, args []string) {
 	comment, err := cmd.Flags().GetString("comment")
 	ticket := args[0]
-	var out strings.Builder
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
 
-	out.WriteString("Clocked IN on ")
-	out.WriteString(ticket)
-	if comment != "" {
-		out.WriteString(": " + comment)
-	}
-
-	fmt.Println(out.String())
-
+	tracker.Start(ticket, comment, "rock.log")
 }
 
 func init() {

@@ -22,15 +22,17 @@ func GetClockedState(ticket string, logFile string) (string, error) {
 		return "", fmt.Errorf("failed to open log file: %w", err)
 	}
 
-	logData := strings.SplitSeq(string(dat[:]), "\n")
-	for log := range logData {
+	logData := strings.Split(string(dat[:]), "\n")
+	var logEntries []LogEntry
+	for _, log := range logData {
 		l, err := ParseLogEntry(log)
-		if err == nil {
-			fmt.Println(l.Timestamp)
+		if err == nil && l.Ticket == ticket {
+			logEntries = append(logEntries, l)
 		}
 	}
+	lastEntry := logEntries[len(logEntries) - 1]
 
-	return "", nil
+	return lastEntry.Action, nil
 }
 
 func writeLog(logEntry LogEntry, logFile string) error {

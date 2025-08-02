@@ -12,7 +12,7 @@ func Start(ticket string, comment string, logFile string) error {
 }
 
 func Stop(ticket string, comment string, logFile string) error {
-	logEntry := NewLogEntryNow("start", ticket, comment)
+	logEntry := NewLogEntryNow("stop", ticket, comment)
 	return writeLog(logEntry, logFile)
 }
 

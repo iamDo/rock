@@ -41,7 +41,7 @@ func Stop(comment string, logFile string) error {
 }
 
 func lastLogEntry(logFile string) (LogEntry, error) {
-	logEntries, err := getLogEntries(logFile)
+	logEntries, err := GetLogEntries(logFile)
 	if err != nil {
 		return LogEntry{}, err
 	}
@@ -53,7 +53,7 @@ func lastLogEntry(logFile string) (LogEntry, error) {
 	return logEntries[len(logEntries) - 1], nil
 }
 
-func getLogEntries(logFile string) ([]LogEntry, error) {
+func GetLogEntries(logFile string) ([]LogEntry, error) {
 	dat, err := os.ReadFile(logFile)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open log file: %w", err)
@@ -75,7 +75,7 @@ func getLogEntries(logFile string) ([]LogEntry, error) {
 }
 
 func GetClockedState(ticket string, logFile string) (string, error) {
-	logEntries, err := getLogEntries(logFile)
+	logEntries, err := GetLogEntries(logFile)
 	if err != nil {
 		return "", err
 	}

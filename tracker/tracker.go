@@ -4,21 +4,16 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"time"
 )
 
-const logFormat = "%s:%s:%s: "
-
 func Start(ticket string, comment string, logFile string) error {
-	logTime := time.Now().Format("15:04")
-	logLine := fmt.Sprintf(logFormat, logTime, "start", ticket) + comment + "\n"
-	return writeLog(logLine, logFile)
+	logEntry := NewLogEntryNow("start", ticket, comment)
+	return writeLog(logEntry, logFile)
 }
 
 func Stop(ticket string, comment string, logFile string) error {
-	logTime := time.Now().Format("15:04")
-	logLine := fmt.Sprintf(logFormat, logTime, "stop", ticket) + comment + "\n"
-	return writeLog(logLine, logFile)
+	logEntry := NewLogEntryNow("start", ticket, comment)
+	return writeLog(logEntry, logFile)
 }
 
 func GetClockedState(ticket string, logFile string) (string, error) {
@@ -30,23 +25,21 @@ func GetClockedState(ticket string, logFile string) (string, error) {
 	logData := strings.SplitSeq(string(dat[:]), "\n")
 	for log := range logData {
 		l, err := ParseLogEntry(log)
-		if err != nil {
-			return "", fmt.Errorf("failed to parse log line: %w", err)
+		if err == nil {
+			fmt.Println(l.Timestamp)
 		}
-
-		fmt.Println(l.Timestamp)
 	}
 
 	return "", nil
 }
 
-func writeLog(logLine string, logFile string) error {
+func writeLog(logEntry LogEntry, logFile string) error {
 	f, err := os.OpenFile(logFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return fmt.Errorf("failed to open log file: %w", err)
 	}
 	defer f.Close()
 
-	_, err = f.WriteString(logLine)
+	_, err = f.WriteString(logEntry.String() + "\n")
 	return err
 }

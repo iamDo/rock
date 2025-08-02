@@ -4,6 +4,7 @@ import (
 	"rock/config"
 	"os"
 	"rock/cmd"
+	"fmt"
 )
 
 func main() {

@@ -3,7 +3,9 @@ package tracker
 import (
 	"fmt"
 	"os"
+	"slices"
 	"strings"
+	"time"
 )
 
 func Start(ticket string, comment string, logFile string) error {
@@ -99,4 +101,54 @@ func writeLog(logEntry LogEntry, logFile string) error {
 
 	_, err = f.WriteString(logEntry.String() + "\n")
 	return err
+}
+
+func UniqueTickets(logFile string) ([]string, error) {
+	logEntries, err := GetLogEntries(logFile)
+	if err != nil {
+		return nil, err
+	}
+
+	var uniqueTickets []string
+	for _, e := range logEntries {
+		if !slices.Contains(uniqueTickets, e.Ticket) {
+			uniqueTickets = append(uniqueTickets, e.Ticket)
+		}
+	}
+
+	return uniqueTickets, nil
+}
+
+func TimeSpent(ticket string, logFile string) (time.Time, error) {
+	logEntries, err := GetLogEntries(logFile)
+	if err != nil {
+		return time.Time{}, err
+	}
+
+	matchingEntries := slices.DeleteFunc(logEntries, func(l LogEntry) bool {
+		return l.Ticket != ticket
+	})
+
+	startEntries := slices.DeleteFunc(slices.Clone(matchingEntries), func(l LogEntry) bool {
+		return l.Action != "start"
+	})
+
+	stopEntries := slices.DeleteFunc(slices.Clone(matchingEntries), func(l LogEntry) bool {
+		return l.Action != "stop"
+	})
+
+	timeSpent := time.Time{}
+	for i, _ := range startEntries {
+		startEntry := startEntries[i]
+		var stopEntry LogEntry
+		if i >= len(stopEntries) {
+			stopEntry = NewLogEntryNow("", ticket, "")
+		} else {
+			stopEntry = stopEntries[i]
+		}
+		diff := stopEntry.Timestamp.Sub(startEntry.Timestamp)
+		timeSpent = timeSpent.Add(diff)
+	}
+
+	return timeSpent, nil
 }

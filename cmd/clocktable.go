@@ -13,7 +13,7 @@ import (
 )
 
 type timeTicket struct {
-	duration time.Time
+	duration time.Duration
 	ticket   string
 }
 
@@ -51,7 +51,7 @@ func clockTableRun(cmd *cobra.Command, args []string) {
 
 	var rows [][]string
 	for _, tt := range timeTickets {
-		row := []string{tt.ticket, tt.duration.Format("15:04")}
+		row := []string{tt.ticket, prettyDuration(tt.duration)}
 		rows = append(rows, row)
 	}
 

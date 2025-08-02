@@ -1,7 +1,11 @@
 package main
 
-import "rock/cmd"
+import (
+	"rock/config"
+	"rock/cmd"
+)
 
 func main() {
+	config.Init()
 	cmd.Execute()
 }

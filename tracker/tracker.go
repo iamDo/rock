@@ -119,10 +119,10 @@ func UniqueTickets(logFile string) ([]string, error) {
 	return uniqueTickets, nil
 }
 
-func TimeSpent(ticket string, logFile string) (time.Time, error) {
+func TimeSpent(ticket string, logFile string) (time.Duration, error) {
 	logEntries, err := GetLogEntries(logFile)
 	if err != nil {
-		return time.Time{}, err
+		return 0, err
 	}
 
 	matchingEntries := slices.DeleteFunc(logEntries, func(l LogEntry) bool {
@@ -137,7 +137,7 @@ func TimeSpent(ticket string, logFile string) (time.Time, error) {
 		return l.Action != "stop"
 	})
 
-	timeSpent := time.Time{}
+	var timeSpent time.Duration
 	for i, _ := range startEntries {
 		startEntry := startEntries[i]
 		var stopEntry LogEntry
@@ -147,7 +147,7 @@ func TimeSpent(ticket string, logFile string) (time.Time, error) {
 			stopEntry = stopEntries[i]
 		}
 		diff := stopEntry.Timestamp.Sub(startEntry.Timestamp)
-		timeSpent = timeSpent.Add(diff)
+		timeSpent += diff
 	}
 
 	return timeSpent, nil

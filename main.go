@@ -8,6 +8,11 @@ import (
 
 func main() {
 	config.Init()
-	os.OpenFile(config.LogFilePath(), os.O_CREATE, 0644)
+	f, err := os.OpenFile(config.LogFilePath(), os.O_CREATE, 0644)
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+	f.Close()
 	cmd.Execute()
 }

@@ -8,12 +8,11 @@ import (
 
 func Start(ticket string, comment string, logFile string) error {
 	logEntry := NewLogEntryNow("start", ticket, comment)
-	logEntries, err := getLogEntries(logFile)
+	lastEntry, err := lastLogEntry(logFile)
 	if err != nil {
 		return err
 	}
 
-	lastEntry := logEntries[len(logEntries) - 1]
 	if lastEntry.Action == "start" {
 		stopLogEntry := NewLogEntryNow("stop", lastEntry.Ticket, "automatically clocked out")
 		err := writeLog(stopLogEntry, logFile)
@@ -28,6 +27,14 @@ func Start(ticket string, comment string, logFile string) error {
 func Stop(ticket string, comment string, logFile string) error {
 	logEntry := NewLogEntryNow("stop", ticket, comment)
 	return writeLog(logEntry, logFile)
+}
+
+func lastLogEntry(logFile string) (LogEntry, error) {
+	logEntries, err := getLogEntries(logFile)
+	if err != nil {
+		return LogEntry{}, err
+	}
+	return logEntries[len(logEntries) - 1], nil
 }
 
 func getLogEntries(logFile string) ([]LogEntry, error) {

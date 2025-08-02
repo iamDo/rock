@@ -3,9 +3,9 @@ package cmd
 import (
 	"fmt"
 	"rock/tracker"
+	"rock/config"
 	"github.com/spf13/cobra"
 	"os"
-	"github.com/spf13/viper"
 )
 
 var startCmd = &cobra.Command{
@@ -16,7 +16,7 @@ var startCmd = &cobra.Command{
 }
 
 func startRun(cmd *cobra.Command, args []string) {
-	logFile := viper.GetString("logfile")
+	logFile := config.LogFilePath()
 	comment, err := cmd.Flags().GetString("comment")
 	ticket := args[0]
 	if err != nil {
@@ -24,7 +24,11 @@ func startRun(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	tracker.Start(ticket, comment, logFile)
+	err = tracker.Start(ticket, comment, logFile)
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
 }
 
 func init() {

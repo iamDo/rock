@@ -23,6 +23,10 @@ func LogFilePath() string {
 	return logFilePath
 }
 
+func ServerPort() int {
+	return viper.GetInt("server.port")
+}
+
 func Init() {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
@@ -34,6 +38,7 @@ func Init() {
 	viper.AddConfigPath(filepath.Join(homeDir, ".config", "rock"))
 	viper.AddConfigPath(".")
 	viper.SetDefault("logfile", "./rock.log")
+	viper.SetDefault("server.port", 8090)
 
 	err = viper.ReadInConfig()
 	if err != nil {

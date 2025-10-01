@@ -6,9 +6,11 @@ import (
 	"slices"
 	"strings"
 	"time"
+	"rock/config"
 )
 
-func Start(ticket string, comment string, logFile string) error {
+func Start(ticket string, comment string) error {
+	logFile := config.LogFilePath()
 	logEntry := NewLogEntryNow("start", ticket, comment)
 	lastEntry, err := lastLogEntry(logFile)
 	if err != nil {
@@ -26,7 +28,8 @@ func Start(ticket string, comment string, logFile string) error {
 	return writeLog(logEntry, logFile)
 }
 
-func Stop(comment string, logFile string) error {
+func Stop(comment string) error {
+	logFile := config.LogFilePath()
 	lastEntry, err := lastLogEntry(logFile)
 	if err != nil {
 		return err

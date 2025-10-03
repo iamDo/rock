@@ -33,28 +33,19 @@ func addr() string {
 }
 
 func handleStart(w http.ResponseWriter, req *http.Request) {
-	if err := req.ParseForm(); err != nil {
-		http.Error(w, "Failed to parse form data", http.StatusBadRequest)
+	ticket, comment, err := getFormData(req)
+	if handleHttpError(w, err) {
 		return
 	}
-
-	ticket := req.FormValue("ticket")
-	if ticket == "" {
-		http.Error(w, "Missing ticket", http.StatusBadRequest)
-		return
-	}
-	comment := req.FormValue("comment")
 	fmt.Printf("START: %s\n", ticket)
 	tracker.Start(ticket, comment)
 }
 
 func handleStop(w http.ResponseWriter, req *http.Request) {
-	if err := req.ParseForm(); err != nil {
-		http.Error(w, "Failed to parse form data", http.StatusBadRequest)
+	_, comment, err := getFormData(req)
+	if handleHttpError(w, err) {
 		return
 	}
-
-	comment := req.FormValue("comment")
 	fmt.Printf("STOP")
 	tracker.Stop(comment)
 }
@@ -71,4 +62,19 @@ func handleHttpError(w http.ResponseWriter, err error) bool {
 		}
 	}
 	return false
+}
+
+func getFormData(req *http.Request) (string, string, error){
+	if err := req.ParseForm(); err != nil {
+		return "", "", &httpError{"Failed to parse form data", http.StatusBadRequest}
+	}
+
+	ticket := req.FormValue("ticket")
+	comment := req.FormValue("comment")
+
+	if ticket == "" {
+		return "", "", &httpError{"Failed to parse form data", http.StatusBadRequest}
+	}
+
+	return ticket, comment, nil
 }

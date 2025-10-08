@@ -24,7 +24,18 @@ func Start(ticket string, comment string, logFile string) error {
 	return writeLog(logEntry, logFile)
 }
 
-func Stop(ticket string, comment string, logFile string) error {
+func Stop(comment string, logFile string) error {
+	lastEntry, err := lastLogEntry(logFile)
+	if err != nil {
+		return err
+	}
+
+	if lastEntry.Action == "stop" {
+		return fmt.Errorf("Nothing to clock out from")
+	}
+
+	ticket := lastEntry.Ticket
+
 	logEntry := NewLogEntryNow("stop", ticket, comment)
 	return writeLog(logEntry, logFile)
 }

@@ -6,6 +6,7 @@ import (
 	"rock/tracker"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var getclockedstateCmd = &cobra.Command{
@@ -16,7 +17,8 @@ var getclockedstateCmd = &cobra.Command{
 }
 
 func getClockedStateRun(cmd *cobra.Command, args []string) {
-	state, err := tracker.GetClockedState(args[0], "rock.log")
+	logFile := viper.GetString("logfile")
+	state, err := tracker.GetClockedState(args[0], logFile)
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)

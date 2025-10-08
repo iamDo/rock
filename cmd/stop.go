@@ -5,6 +5,7 @@ import (
 	"rock/tracker"
 	"github.com/spf13/cobra"
 	"os"
+	"github.com/spf13/viper"
 )
 
 var stopCmd = &cobra.Command{
@@ -15,13 +16,14 @@ var stopCmd = &cobra.Command{
 }
 
 func stopRun(cmd *cobra.Command, args []string) {
+	logFile := viper.GetString("logfile")
 	comment, err := cmd.Flags().GetString("comment")
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
 
-	err = tracker.Stop(comment, "rock.log")
+	err = tracker.Stop(comment, logFile)
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)

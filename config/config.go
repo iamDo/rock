@@ -8,14 +8,14 @@ import (
 
 
 func Init() {
-	configDir, err := os.UserConfigDir()
+	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		panic("couldn't get config dir: " + err.Error())
 	}
 
 	viper.SetConfigName("rock")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath(filepath.Join(configDir, "rock"))
+	viper.AddConfigPath(filepath.Join(homeDir, ".config", "rock"))
 	viper.AddConfigPath(".")
 	viper.SetDefault("logfile", "./rock.log")
 

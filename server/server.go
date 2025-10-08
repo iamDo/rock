@@ -65,6 +65,7 @@ func handleHttpError(w http.ResponseWriter, err error) bool {
 			return true
 		} else {
 			http.Error(w, "Someting unexpected happened", http.StatusInternalServerError)
+			fmt.Println(err.Error())
 			return true
 		}
 	}

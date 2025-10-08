@@ -21,7 +21,7 @@ func getClockedStateRun(cmd *cobra.Command, args []string) {
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
-	fmt.Printf("%s", state)
+	fmt.Println(state)
 }
 
 func init() {

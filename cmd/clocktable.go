@@ -23,6 +23,15 @@ var clocktableCmd = &cobra.Command{
 	Run: clockTableRun,
 }
 
+func prettyDuration(d time.Duration) string {
+	h := int(d.Hours())
+	m := int(d.Minutes()) % 60
+	if h == 0 {
+		return fmt.Sprintf("%dm", m)
+	}
+	return fmt.Sprintf("%dh %dm", h, m)
+}
+
 func clockTableRun(cmd *cobra.Command, args []string) {
 	uniqueTickets, err := tracker.UniqueTickets(config.LogFilePath())
 	if err != nil {

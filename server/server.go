@@ -40,12 +40,39 @@ func addr() string {
 }
 
 func handleStart(w http.ResponseWriter, req *http.Request) {
-	rd, err := getFormData(req)
+	bodyRd, err := getBodyData(req)
+
 	if handleHttpError(w, err) {
 		return
 	}
-	fmt.Printf("START: %s\n", rd.Ticket)
-	tracker.Start(rd.Ticket, rd.Comment)
+
+	comment := bodyRd.Comment
+	ticket := bodyRd.Ticket
+
+	if ticket == "" || comment == "" {
+		formRd, err := getFormData(req)
+
+		if handleHttpError(w, err) {
+			return
+		}
+
+		if ticket == "" {
+			ticket = formRd.Ticket
+		}
+
+		if comment == "" {
+			comment = formRd.Comment
+		}
+	}
+
+	if ticket == "" {
+		if handleHttpError(w, &httpError{"Incomplete data", http.StatusBadGateway}) {
+			return
+		}
+	}
+
+	fmt.Printf("START: %s\n", ticket)
+	tracker.Start(ticket, comment)
 }
 
 func handleStop(w http.ResponseWriter, req *http.Request) {

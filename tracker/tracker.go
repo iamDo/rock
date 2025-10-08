@@ -54,6 +54,10 @@ func getLogEntries(logFile string) ([]LogEntry, error) {
 		return nil, fmt.Errorf("failed to open log file: %w", err)
 	}
 
+	if len(dat) == 0 {
+		return nil, nil
+	}
+
 	logData := strings.SplitSeq(string(dat[:]), "\n")
 	var logEntries []LogEntry
 	for log := range logData {

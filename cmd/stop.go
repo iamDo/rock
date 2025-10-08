@@ -2,10 +2,11 @@ package cmd
 
 import (
 	"fmt"
-	"rock/tracker"
-	"github.com/spf13/cobra"
 	"os"
-	"github.com/spf13/viper"
+	"rock/config"
+	"rock/tracker"
+
+	"github.com/spf13/cobra"
 )
 
 var stopCmd = &cobra.Command{
@@ -16,7 +17,7 @@ var stopCmd = &cobra.Command{
 }
 
 func stopRun(cmd *cobra.Command, args []string) {
-	logFile := viper.GetString("logfile")
+	logFile := config.LogFilePath()
 	comment, err := cmd.Flags().GetString("comment")
 	if err != nil {
 		fmt.Println(err.Error())

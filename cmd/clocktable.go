@@ -8,6 +8,8 @@ import (
 
 	"github.com/spf13/cobra"
 	"time"
+	"github.com/charmbracelet/lipgloss"
+	"github.com/charmbracelet/lipgloss/table"
 )
 
 type timeTicket struct {
@@ -38,9 +40,40 @@ func clockTableRun(cmd *cobra.Command, args []string) {
 		timeTickets = append(timeTickets, timeTicket{ts, t})
 	}
 
+	var rows [][]string
 	for _, tt := range timeTickets {
-		fmt.Println(fmt.Sprintf("[%s] %s", tt.ticket, tt.duration.Format("15:04")))
+		row := []string{tt.ticket, tt.duration.Format("15:04")}
+		rows = append(rows, row)
 	}
+
+	var (
+		purple    = lipgloss.Color("99")
+		gray      = lipgloss.Color("245")
+		lightGray = lipgloss.Color("241")
+
+		headerStyle  = lipgloss.NewStyle().Foreground(purple).Bold(true).Align(lipgloss.Center)
+		cellStyle    = lipgloss.NewStyle().Padding(0, 1).Width(14)
+		oddRowStyle  = cellStyle.Foreground(gray)
+		evenRowStyle = cellStyle.Foreground(lightGray)
+	)
+
+	t := table.New().
+		Border(lipgloss.NormalBorder()).
+		BorderStyle(lipgloss.NewStyle().Foreground(purple)).
+		StyleFunc(func(row, col int) lipgloss.Style {
+			switch {
+			case row == table.HeaderRow:
+				return headerStyle
+			case row%2 == 0:
+				return evenRowStyle
+			default:
+				return oddRowStyle
+			}
+		}).
+		Headers("Ticket", "Duration").
+		Rows(rows...)
+
+	fmt.Println(t)
 }
 
 func init() {

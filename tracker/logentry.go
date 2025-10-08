@@ -41,10 +41,12 @@ func ParseLogEntry(l string) (LogEntry, error) {
 		comment = strings.TrimLeftFunc(splitLine[4], unicode.IsSpace)
 	}
 
-	timeStamp, err := time.Parse("15:04", splitLine[0] + ":" + splitLine[1])
+	now := time.Now()
+	parsedTime, err := time.Parse("15:04", splitLine[0] + ":" + splitLine[1])
 	if err != nil {
 		return LogEntry{}, err
 	}
+	timeStamp := time.Date(now.Year(), now.Month(), now.Day(), parsedTime.Hour(), parsedTime.Minute(), 0, 0, now.Location())
 
 	return LogEntry{
 		Timestamp: timeStamp,
@@ -55,9 +57,8 @@ func ParseLogEntry(l string) (LogEntry, error) {
 }
 
 func NewLogEntryNow(action string, ticket string, comment string) LogEntry {
-	now := time.Now()
 	return LogEntry{
-		Timestamp: time.Date(0, 1, 1, now.Hour(), now.Minute(), 0, 0, time.UTC),
+		Timestamp: time.Now(),
 		Action: action,
 		Ticket: ticket,
 		Comment: comment,

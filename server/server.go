@@ -9,6 +9,7 @@ import (
 
 func Serve() error {
 	http.HandleFunc("/start", handleStart)
+	http.HandleFunc("/stop", handleStop)
 	err := http.ListenAndServe(addr(), nil)
 	if err != nil {
 		return err
@@ -35,4 +36,15 @@ func handleStart(w http.ResponseWriter, req *http.Request) {
 	comment := req.FormValue("comment")
 	fmt.Printf("START: %s\n", ticket)
 	tracker.Start(ticket, comment)
+}
+
+func handleStop(w http.ResponseWriter, req *http.Request) {
+	if err := req.ParseForm(); err != nil {
+		http.Error(w, "Failed to parse form data", http.StatusBadRequest)
+		return
+	}
+
+	comment := req.FormValue("comment")
+	fmt.Printf("STOP")
+	tracker.Stop(comment)
 }

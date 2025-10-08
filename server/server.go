@@ -46,8 +46,8 @@ func handleStop(w http.ResponseWriter, req *http.Request) {
 	if handleHttpError(w, err) {
 		return
 	}
-	fmt.Printf("STOP")
 	tracker.Stop(comment)
+	fmt.Printf("STOP\n")
 }
 
 func handleHttpError(w http.ResponseWriter, err error) bool {

@@ -76,12 +76,26 @@ func handleStart(w http.ResponseWriter, req *http.Request) {
 }
 
 func handleStop(w http.ResponseWriter, req *http.Request) {
-	rd, err := getFormData(req)
+	bodyRd, err := getBodyData(req)
+
 	if handleHttpError(w, err) {
 		return
 	}
+
+	comment := bodyRd.Comment
+
+	if comment == "" {
+		formRd, err := getFormData(req)
+
+		if handleHttpError(w, err) {
+			return
+		}
+
+		comment = formRd.Comment
+	}
+
 	fmt.Printf("STOP\n")
-	tracker.Stop(rd.Comment)
+	tracker.Stop(comment)
 }
 
 func handleHttpError(w http.ResponseWriter, err error) bool {

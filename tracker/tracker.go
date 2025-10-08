@@ -27,8 +27,8 @@ func GetClockedState(ticket string, logFile string) (string, error) {
 		return "", fmt.Errorf("failed to open log file: %w", err)
 	}
 
-	logData := strings.Split(string(dat[:]), "\n")
-	for _, log := range logData {
+	logData := strings.SplitSeq(string(dat[:]), "\n")
+	for log := range logData {
 		l, err := ParseLogEntry(log)
 		if err != nil {
 			return "", fmt.Errorf("failed to parse log line: %w", err)

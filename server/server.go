@@ -1,8 +1,10 @@
 package server
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"rock/config"
 	"rock/tracker"
@@ -89,4 +91,23 @@ func getFormData(req *http.Request) (requestData, error){
 	return rd, nil
 }
 
+func getBodyData(req *http.Request) (requestData, error) {
+	defer req.Body.Close()
+	rd := requestData{}
+
+	data, err := io.ReadAll(req.Body)
+	if err != nil {
+		return rd, err
+	}
+
+	if len(data) == 0 {
+		return requestData{}, nil
+	}
+
+	err = json.Unmarshal(data, &rd)
+	if err != nil {
+		return rd, err
+	}
+
+	return rd, nil
 }

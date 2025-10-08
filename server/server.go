@@ -107,10 +107,6 @@ func getFormData(req *http.Request) (requestData, error){
 	ticket := req.FormValue("ticket")
 	comment := req.FormValue("comment")
 
-	if ticket == "" {
-		return requestData{}, &httpError{"Failed to parse form data", http.StatusBadRequest}
-	}
-
 	rd := requestData{
 		Ticket:  ticket,
 		Comment: comment,

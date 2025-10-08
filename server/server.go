@@ -13,6 +13,11 @@ type httpError struct {
 	Code int
 }
 
+type requestData struct {
+	Ticket  string `json:"ticket"`
+	Comment string `json:"comment"`
+}
+
 func (e *httpError) Error() string {
 	return fmt.Sprintf("Error [%d]: %s", e.Code, e.Msg)
 }
@@ -33,21 +38,21 @@ func addr() string {
 }
 
 func handleStart(w http.ResponseWriter, req *http.Request) {
-	ticket, comment, err := getFormData(req)
+	rd, err := getFormData(req)
 	if handleHttpError(w, err) {
 		return
 	}
-	fmt.Printf("START: %s\n", ticket)
-	tracker.Start(ticket, comment)
+	fmt.Printf("START: %s\n", rd.Ticket)
+	tracker.Start(rd.Ticket, rd.Comment)
 }
 
 func handleStop(w http.ResponseWriter, req *http.Request) {
-	_, comment, err := getFormData(req)
+	rd, err := getFormData(req)
 	if handleHttpError(w, err) {
 		return
 	}
-	tracker.Stop(comment)
 	fmt.Printf("STOP\n")
+	tracker.Stop(rd.Comment)
 }
 
 func handleHttpError(w http.ResponseWriter, err error) bool {
@@ -64,17 +69,24 @@ func handleHttpError(w http.ResponseWriter, err error) bool {
 	return false
 }
 
-func getFormData(req *http.Request) (string, string, error){
+func getFormData(req *http.Request) (requestData, error){
 	if err := req.ParseForm(); err != nil {
-		return "", "", &httpError{"Failed to parse form data", http.StatusBadRequest}
+		return requestData{}, &httpError{"Failed to parse form data", http.StatusBadRequest}
 	}
 
 	ticket := req.FormValue("ticket")
 	comment := req.FormValue("comment")
 
 	if ticket == "" {
-		return "", "", &httpError{"Failed to parse form data", http.StatusBadRequest}
+		return requestData{}, &httpError{"Failed to parse form data", http.StatusBadRequest}
 	}
 
-	return ticket, comment, nil
+	rd := requestData{
+		Ticket:  ticket,
+		Comment: comment,
+	}
+
+	return rd, nil
+}
+
 }
